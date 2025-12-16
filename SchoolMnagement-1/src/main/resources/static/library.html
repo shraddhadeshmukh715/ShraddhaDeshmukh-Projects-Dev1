@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Management</title>
+<style>
+body{margin:0; background:linear-gradient(135deg,#ff512f,#dd2476); font-family:Poppins;}
+.nav{display:flex; justify-content:center; gap:20px; padding:20px;}
+.nav a{background:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;}
+.nav a:hover{background:#ffde7a; transform:scale(1.1);}
+.container{width:40%; background:white; margin:30px auto; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.3);}
+input,button{width:100%; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #ccc;}
+button{background:#dd2476; color:white; font-weight:600;}
+button:hover{background:#b81b62; transform:scale(1.05);}
+#result{white-space:pre-wrap; background:#f4f4f4; padding:20px; border-radius:10px; margin-top:20px;}
+h2{text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="nav">
+    <a href="index.html">Home</a>
+    <a href="student.html">Student</a>
+    <a href="teacher.html">Teacher</a>
+    <a href="staff.html">Staff</a>
+</div>
+
+<div class="container">
+    <h2>Library Management</h2>
+
+    <input id="id" placeholder="ID" type="number">
+    <input id="bookName" placeholder="Book Name">
+    <input id="author" placeholder="Author">
+
+    <button onclick="addData()">Add Book</button>
+    <button onclick="getAll()">Get All</button>
+    <button onclick="getById()">Get By ID</button>
+    <button onclick="deleteById()">Delete</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function addData() {
+    fetch("http://localhost:8080/library", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            id:id.value,
+            bookName:bookName.value,
+            author:author.value
+        })
+    }).then(r=>r.json()).then(show);
+}
+
+function getAll(){ fetch("http://localhost:8080/library").then(r=>r.json()).then(show); }
+function getById(){ fetch("http://localhost:8080/library/"+id.value).then(r=>r.json()).then(show); }
+function deleteById(){ fetch("http://localhost:8080/library/"+id.value,{method:"DELETE"}).then(r=>r.text()).then(show); }
+
+function show(msg){ result.innerText = JSON.stringify(msg, null, 2); }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Teacher Management</title>
+<style>
+    body {margin:0; background:linear-gradient(135deg,#ff9966,#ff5e62); font-family:Poppins;}
+    .nav{display:flex; justify-content:center; gap:20px; padding:20px;}
+    .nav a{text-decoration:none; background:white; padding:10px 20px; border-radius:8px; font-weight:600; transition:0.3s;}
+    .nav a:hover{background:#ffe27a; transform:scale(1.1);}
+    .container{width:40%; margin:30px auto; background:white; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.3);}
+    input,button{width:100%; padding:12px; margin-top:10px; border-radius:8px; border:1px solid #ccc;}
+    button{background:#ff5e62; color:white; font-weight:600;}
+    button:hover{background:#e9484b; transform:scale(1.05);}
+    #result{background:#f3f3f3; padding:20px; margin-top:20px; border-radius:10px; white-space:pre-wrap;}
+    h2{text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="nav">
+    <a href="index.html">Home</a>
+    <a href="student.html">Student</a>
+    <a href="staff.html">Staff</a>
+    <a href="library.html">Library</a>
+</div>
+
+<div class="container">
+    <h2>Teacher Management</h2>
+
+    <input id="id" placeholder="ID" type="number">
+    <input id="name" placeholder="Name">
+    <input id="subject" placeholder="Subject">
+
+    <button onclick="addTeacher()">Add Teacher</button>
+    <button onclick="getAll()">Get All</button>
+    <button onclick="getById()">Get By ID</button>
+    <button onclick="deleteById()">Delete</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function addTeacher() {
+    fetch("http://localhost:8080/teacher", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            id: id.value,
+            name: name.value,
+            subject: subject.value
+        })
+    }).then(r=>r.json()).then(show);
+}
+
+function getAll() {
+    fetch("http://localhost:8080/teacher")
+        .then(r=>r.json()).then(show);
+}
+
+function getById() {
+    fetch("http://localhost:8080/teacher/" + id.value)
+        .then(r=>r.json()).then(show);
+}
+
+function deleteById() {
+    fetch("http://localhost:8080/teacher/" + id.value, {method:"DELETE"})
+        .then(r=>r.text()).then(show);
+}
+
+function show(msg){ result.innerText = JSON.stringify(msg, null, 2); }
+</script>
+
+</body>
+</html>

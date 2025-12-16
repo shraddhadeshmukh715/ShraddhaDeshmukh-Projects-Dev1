@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management</title>
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        font-family: Poppins, sans-serif;
+    }
+    .nav {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    .nav a {
+        text-decoration: none;
+        padding: 10px 20px;
+        background: white;
+        color: #333;
+        border-radius: 8px;
+        transition: 0.3s;
+        font-weight: 600;
+    }
+    .nav a:hover {
+        background: #ffda79;
+        transform: scale(1.1);
+    }
+    .container {
+        width: 40%;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+    }
+    input, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    button {
+        background: #0072ff;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+    button:hover {
+        transform: scale(1.05);
+        background: #0053cc;
+    }
+    #result {
+        margin-top: 20px;
+        white-space: pre-wrap;
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    h2 {
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<div class="nav">
+    <a href="index.html">Home</a>
+    <a href="teacher.html">Teacher</a>
+    <a href="staff.html">Staff</a>
+    <a href="library.html">Library</a>
+</div>
+
+<div class="container">
+    <h2>Student Management</h2>
+
+    <input id="id" placeholder="ID" type="number">
+    <input id="name" placeholder="Name">
+    <input id="age" placeholder="Age" type="number">
+
+    <button onclick="addStudent()">Add Student</button>
+    <button onclick="getAll()">Get All Students</button>
+    <button onclick="getById()">Get Student By ID</button>
+    <button onclick="deleteById()">Delete Student</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function addStudent() {
+    fetch("http://localhost:8080/student", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            id: document.getElementById("id").value,
+            name: document.getElementById("name").value,
+            age: document.getElementById("age").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => show(data));
+}
+
+function getAll() {
+    fetch("http://localhost:8080/student")
+        .then(res => res.json())
+        .then(data => show(data));
+}
+
+function getById() {
+    let id = document.getElementById("id").value;
+    fetch("http://localhost:8080/student/" + id)
+        .then(res => res.json())
+        .then(data => show(data));
+}
+
+function deleteById() {
+    let id = document.getElementById("id").value;
+    fetch("http://localhost:8080/student/" + id, {method: "DELETE"})
+        .then(res => res.text())
+        .then(data => show(data));
+}
+
+function show(msg) {
+    document.getElementById("result").innerText = JSON.stringify(msg, null, 2);
+}
+</script>
+
+</body>
+</html>
