@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Management UI</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #7aa2ff, #b8e0ff);
+        }
+
+        .center-box {
+            text-align: center;
+            margin-top: 120px;
+            color: white;
+        }
+
+        button {
+            padding: 14px 32px;
+            background: #ff7b7b;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e35252;
+        }
+
+        .back-btn {
+            background: #4a63e7;
+        }
+
+        .back-btn:hover {
+            background: #2f49c2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .card {
+            width: 450px;
+            padding: 25px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px 0;
+            border: 1px solid #d1d1d1;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 14px;
+            color: #333;
+        }
+
+        .output-box {
+            white-space: pre-wrap;
+            background: #eef1ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #4a63e7;
+        }
+
+        /* Back button bottom alignment */
+        .bottom-box {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+    </style>
+
+    <script>
+        function showPage(page) {
+            document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+            document.getElementById(page).classList.remove("hidden");
+        }
+
+        // API Calls
+        async function saveDoctor() {
+            const doctor = {
+                id: document.getElementById("d_id").value,
+                name: document.getElementById("d_name").value,
+                address: document.getElementById("d_address").value,
+                spl: document.getElementById("d_spl").value
+            };
+            let res = await fetch("http://localhost:8080/doctor/add", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(doctor)
+            });
+            alert(await res.text());
+        }
+
+        async function getDoctor() {
+            let id = document.getElementById("d_get").value;
+            let res = await fetch("http://localhost:8080/doctor/get/" + id);
+            document.getElementById("doctor_result").innerText = JSON.stringify(await res.json(), null, 2);
+        }
+
+        async function deleteDoctor() {
+            let id = document.getElementById("d_delete").value;
+            let res = await fetch("http://localhost:8080/doctor/delete/" + id, {method: "DELETE"});
+            alert(await res.text());
+        }
+
+        async function savePatient() {
+            const patient = {
+                name: document.getElementById("p_name").value,
+                gender: document.getElementById("p_gender").value,
+                age: document.getElementById("p_age").value,
+                disease: document.getElementById("p_disease").value
+            };
+            let res = await fetch("http://localhost:8080/patient/add", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(patient)
+            });
+            alert(await res.text());
+        }
+
+        async function getPatient() {
+            let name = document.getElementById("p_get").value;
+            let res = await fetch("http://localhost:8080/patient/get/" + name);
+            document.getElementById("patient_result").innerText = JSON.stringify(await res.json(), null, 2);
+        }
+
+        async function deletePatient() {
+            let name = document.getElementById("p_delete").value;
+            let res = await fetch("http://localhost:8080/patient/delete/" + name, {method: "DELETE"});
+            alert(await res.text());
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- PAGE 1: Landing -->
+    <div id="start" class="page">
+        <div class="center-box">
+            <h1 style="font-size: 38px;">🏥 Welcome to Hospital Management System</h1>
+            <button onclick="showPage('select')">Get Started</button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Select Doctor / Patient -->
+    <div id="select" class="page hidden">
+        <div class="center-box">
+            <h2>Select Category</h2>
+            <button onclick="showPage('doctor')">Doctor</button>
+            <button onclick="showPage('patient')">Patient</button>
+        </div>
+
+        <div class="bottom-box">
+            <button class="back-btn" onclick="showPage('start')">⬅ Back</button>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Doctor Page -->
+    <div id="doctor" class="page hidden">
+
+        <div class="card">
+            <div class="title">Add Doctor</div>
+            <input id="d_id" placeholder="Doctor ID">
+            <input id="d_name" placeholder="Name">
+            <input id="d_address" placeholder="Address">
+            <input id="d_spl" placeholder="Specialization">
+            <button onclick="saveDoctor()">Save Doctor</button>
+        </div>
+
+        <div class="card">
+            <div class="title">Get Doctor</div>
+            <input id="d_get" placeholder="Enter Doctor ID">
+            <button onclick="getDoctor()">Get</button>
+            <div id="doctor_result" class="output-box"></div>
+        </div>
+
+        <div class="card">
+            <div class="title">Delete Doctor</div>
+            <input id="d_delete" placeholder="Enter Doctor ID">
+            <button onclick="deleteDoctor()">Delete</button>
+        </div>
+
+        <div class="bottom-box">
+            <button class="back-btn" onclick="showPage('select')">⬅ Back</button>
+        </div>
+
+    </div>
+
+    <!-- PAGE 4: Patient Page -->
+    <div id="patient" class="page hidden">
+
+        <div class="card">
+            <div class="title">Add Patient</div>
+            <input id="p_name" placeholder="Name">
+            <select id="p_gender">
+                <option value="">-- Select Gender --</option>
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+            <input id="p_age" placeholder="Age" type="number">
+            <input id="p_disease" placeholder="Disease">
+            <button onclick="savePatient()">Save Patient</button>
+        </div>
+
+        <div class="card">
+            <div class="title">Get Patient</div>
+            <input id="p_get" placeholder="Enter Name">
+            <button onclick="getPatient()">Get</button>
+            <div id="patient_result" class="output-box"></div>
+        </div>
+
+        <div class="card">
+            <div class="title">Delete Patient</div>
+            <input id="p_delete" placeholder="Enter Name">
+            <button onclick="deletePatient()">Delete</button>
+        </div>
+
+        <div class="bottom-box">
+            <button class="back-btn" onclick="showPage('select')">⬅ Back</button>
+        </div>
+
+    </div>
+
+</body>
+</html>

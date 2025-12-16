@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Management System</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #eef3ff;
+    }
+    nav {
+        display: flex;
+        background: #4A6CF7;
+        padding: 15px;
+        gap: 20px;
+        justify-content: center;
+    }
+    nav button {
+        background: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    nav button:hover {
+        transform: scale(1.1);
+        background: #dce3ff;
+    }
+    .section {
+        display: none;
+        padding: 40px;
+    }
+    .active {
+        display: block;
+    }
+    .card {
+        width: 450px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
+    }
+    input {
+        width: 100%;
+        margin: 8px 0;
+        padding: 10px;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+    }
+    button.action {
+        width: 100%;
+        background: #4A6CF7;
+        color: white;
+        border: none;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    button.action:hover {
+        background: #3850c4;
+        transform: scale(1.03);
+    }
+    pre {
+        background: #f2f4ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border: 1px solid #d7dfff;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+    <button onclick="show('home')">Home</button>
+    <button onclick="show('student')">Student</button>
+    <button onclick="show('teacher')">Teacher</button>
+    <button onclick="show('staff')">Staff</button>
+    <button onclick="show('library')">Library</button>
+</nav>
+
+<!-- HOME SECTION -->
+<div id="home" class="section active">
+    <h1 style="text-align:center;">🏫 School Management System</h1>
+    <p style="text-align:center; font-size:18px;">Single HTML Page · Multiple Modules</p>
+</div>
+
+<!-- STUDENT SECTION -->
+<div id="student" class="section">
+    <div class="card">
+        <h2>Student Management</h2>
+
+        <input id="stu_id" placeholder="ID">
+        <input id="stu_name" placeholder="Name">
+        <input id="stu_age" placeholder="Age">
+
+        <button class="action" onclick="addStudent()">Add Student</button>
+        <button class="action" onclick="getStudent()">Get By ID</button>
+        <button class="action" onclick="getAllStudents()">Get All</button>
+        <button class="action" onclick="deleteStudent()">Delete</button>
+
+        <pre id="student_result"></pre>
+    </div>
+</div>
+
+<!-- TEACHER SECTION -->
+<div id="teacher" class="section">
+    <div class="card">
+        <h2>Teacher Management</h2>
+
+        <input id="tea_id" placeholder="ID">
+        <input id="tea_name" placeholder="Name">
+        <input id="tea_sub" placeholder="Subject">
+
+        <button class="action" onclick="addTeacher()">Add Teacher</button>
+        <button class="action" onclick="getTeacher()">Get By ID</button>
+        <button class="action" onclick="getAllTeachers()">Get All</button>
+        <button class="action" onclick="deleteTeacher()">Delete</button>
+
+        <pre id="teacher_result"></pre>
+    </div>
+</div>
+
+<!-- STAFF SECTION -->
+<div id="staff" class="section">
+    <div class="card">
+        <h2>Staff Management</h2>
+
+        <input id="stf_id" placeholder="ID">
+        <input id="stf_name" placeholder="Name">
+        <input id="stf_role" placeholder="Role">
+
+        <button class="action" onclick="addStaff()">Add Staff</button>
+        <button class="action" onclick="getStaff()">Get By ID</button>
+        <button class="action" onclick="getAllStaff()">Get All</button>
+        <button class="action" onclick="deleteStaff()">Delete</button>
+
+        <pre id="staff_result"></pre>
+    </div>
+</div>
+
+<!-- LIBRARY SECTION -->
+<div id="library" class="section">
+    <div class="card">
+        <h2>Library Management</h2>
+
+        <input id="lib_id" placeholder="ID">
+        <input id="lib_book" placeholder="Book Name">
+        <input id="lib_author" placeholder="Author">
+
+        <button class="action" onclick="addLibrary()">Add Book</button>
+        <button class="action" onclick="getLibrary()">Get By ID</button>
+        <button class="action" onclick="getAllLibrary()">Get All</button>
+        <button class="action" onclick="deleteLibrary()">Delete</button>
+
+        <pre id="library_result"></pre>
+    </div>
+</div>
+
+<script>
+// NAVIGATION HANDLER
+function show(section) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(section).classList.add('active');
+}
+
+/* ---------------- STUDENT ---------------- */
+
+function addStudent() {
+    fetch("http://localhost:8080/student", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            id: document.getElementById("stu_id").value,
+            name: document.getElementById("stu_name").value,
+            age: document.getElementById("stu_age").value
+        })
+    }).then(res => res.json()).then(data => student_result.innerText = JSON.stringify(data, null, 2));
+}
+
+function getStudent() {
+    fetch("http://localhost:8080/student/" + stu_id.value)
+    .then(res => res.json())
+    .then(data => student_result.innerText = JSON.stringify(data, null, 2));
+}
+
+function getAllStudents() {
+    fetch("http://localhost:8080/student")
+    .then(res => res.json())
+    .then(data => student_result.innerText = JSON.stringify(data, null, 2));
+}
+
+function deleteStudent() {
+    fetch("http://localhost:8080/student/" + stu_id.value, { method: "DELETE" })
+    .then(res => res.text())
+    .then(data => student_result.innerText = data);
+}
+
+/* ---------------- TEACHER ---------------- */
+
+function addTeacher() {
+    fetch("http://localhost:8080/teacher", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            id: tea_id.value,
+            name: tea_name.value,
+            subject: tea_sub.value
+        })
+    }).then(r => r.json()).then(d => teacher_result.innerText = JSON.stringify(d, null, 2));
+}
+
+function getTeacher() {
+    fetch("http://localhost:8080/teacher/" + tea_id.value)
+    .then(r => r.json())
+    .then(d => teacher_result.innerText = JSON.stringify(d, null, 2));
+}
+
+function getAllTeachers() {
+    fetch("http://localhost:8080/teacher")
+    .then(r => r.json())
+    .then(d => teacher_result.innerText = JSON.stringify(d, null, 2));
+}
+
+function deleteTeacher() {
+    fetch("http://localhost:8080/teacher/" + tea_id.value, {method:"DELETE"})
+    .then(r => r.text())
+    .then(d => teacher_result.innerText = d);
+}
+
+/* ---------------- STAFF ---------------- */
+
+function addStaff() {
+    fetch("http://localhost:8080/staff", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            id: stf_id.value,
+            name: stf_name.value,
+            role: stf_role.value
+        })
+    }).then(r=>r.json()).then(d=> staff_result.innerText = JSON.stringify(d,null,2));
+}
+
+function getStaff() {
+    fetch("http://localhost:8080/staff/" + stf_id.value)
+    .then(r=>r.json())
+    .then(d=> staff_result.innerText = JSON.stringify(d,null,2));
+}
+
+function getAllStaff() {
+    fetch("http://localhost:8080/staff")
+    .then(r=>r.json())
+    .then(d=> staff_result.innerText = JSON.stringify(d,null,2));
+}
+
+function deleteStaff() {
+    fetch("http://localhost:8080/staff/" + stf_id.value, {method: "DELETE"})
+    .then(r=>r.text())
+    .then(d=> staff_result.innerText = d);
+}
+
+/* ---------------- LIBRARY ---------------- */
+
+function addLibrary() {
+    fetch("http://localhost:8080/library", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            id: lib_id.value,
+            bookName: lib_book.value,
+            author: lib_author.value
+        })
+    }).then(r=>r.json()).then(d=> library_result.innerText = JSON.stringify(d,null,2));
+}
+
+function getLibrary() {
+    fetch("http://localhost:8080/library/" + lib_id.value)
+    .then(r=>r.json())
+    .then(d=> library_result.innerText = JSON.stringify(d,null,2));
+}
+
+function getAllLibrary() {
+    fetch("http://localhost:8080/library")
+    .then(r=>r.json())
+    .then(d=> library_result.innerText = JSON.stringify(d,null,2));
+}
+
+function deleteLibrary() {
+    fetch("http://localhost:8080/library/" + lib_id.value, {method:"DELETE"})
+    .then(r=>r.text())
+    .then(d=> library_result.innerText = d);
+}
+
+</script>
+
+</body>
+</html>
